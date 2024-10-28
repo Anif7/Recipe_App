@@ -31,7 +31,6 @@ CUISINE_CHOICES = [
 class Recipe(models.Model):
     title=models.CharField(max_length=200)
     author=models.ForeignKey(User,on_delete=models.CASCADE,related_name='recipes')
-    image=models.ImageField(upload_to='images/',blank=True,null=True)
     cuisine=models.CharField(max_length=20,choices=CUISINE_CHOICES)
     food_type=models.CharField(max_length=20,choices=FOOD_TYPE_CHOICE)
     difficulty_level=models.CharField(max_length=10,choices=DIFFICULTY_CHOICES)
@@ -73,3 +72,11 @@ class Ingredient(models.Model):
     
     def __str__(self):
         return f'{self.quantity} {self.get_unit_display()} {self.name}'
+    
+
+class Image(models.Model):
+    image=models.ImageField(upload_to='images/')
+    recipe=models.ForeignKey(Recipe,on_delete=models.CASCADE,related_name='images')
+    
+    def __str__(self):
+        return f"{self.recipe.title}-Image"

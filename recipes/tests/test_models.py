@@ -1,5 +1,5 @@
 from django.test import TestCase
-from ..models import Collection,Recipe,Ingredient
+from ..models import Collection,Recipe,Ingredient,Image
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 
@@ -21,6 +21,7 @@ class InitialSetup(TestCase):
         self.ingredient=Ingredient.objects.create(name='salt',quantity=100,unit='gms',recipe=self.recipe)
         self.collection= Collection.objects.create(title='test',author=self.user)
         self.collection.recipes.add(self.recipe)
+        self.image=Image.objects.create(image='media/images/dosa.jpg',recipe=self.recipe)
 
 
 class CollectionModelTest(InitialSetup):
@@ -60,3 +61,8 @@ class RecipeModelTest(InitialSetup):
         self.recipe.preparation_time=0
         with self.assertRaises(ValidationError):
             self.recipe.full_clean()
+            
+            
+class ImageModelTest(InitialSetup):
+    def test_image_str(self):
+        self.assertEqual(str(self.image),'dosa-Image')
