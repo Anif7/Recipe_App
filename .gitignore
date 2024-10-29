@@ -12,3 +12,5 @@ db.sqlite3
 venv/
 env/
 
+recipes/templates/
+recipes/urls.py
