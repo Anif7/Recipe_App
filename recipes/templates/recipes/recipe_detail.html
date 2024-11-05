@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load custom_filters %}
 
 {% block content %}
 <div class="container mx-auto px-4 py-8 bg-slate-100 mt-1">
@@ -28,9 +29,13 @@
         <p class="bg-gray-100 rounded-lg px-3 py-1">Cuisine: <span class="font-semibold">{{ recipe.cuisine }}</span></p>
         <p class="bg-gray-100 rounded-lg px-3 py-1">Difficulty Level: <span class="font-semibold">{{ recipe.difficulty_level }}</span></p>
         <p class="bg-gray-100 rounded-lg px-3 py-1">Servings: <span class="font-semibold">{{ recipe.servings }}</span></p>
-        <p class="bg-gray-100 rounded-lg px-3 py-1">Calories: <span class="font-semibold">{{ recipe.calories }} cal</span></p>
-        <p class="bg-gray-100 rounded-lg px-3 py-1">Preparation Time: <span class="font-semibold">{{ recipe.preparation_time }} min</span></p>
-        <p class="bg-gray-100 rounded-lg px-3 py-1">Total Time: <span class="font-semibold">{{ recipe.total_time }} min</span></p>
+        <p class="bg-gray-100 rounded-lg px-3 py-1">Calories: <span class="font-semibold">{{ recipe.calories }} kcal</span></p>
+        <p class="bg-gray-100 rounded-lg px-3 py-1">Preparation Time: 
+            <span class="font-semibold">{{ recipe.preparation_time|duration_to_string }}</span>
+        </p>
+        <p class="bg-gray-100 rounded-lg px-3 py-1">Total Time: 
+            <span class="font-semibold">{{ recipe.total_time|duration_to_string }}</span>
+        </p>        
     </div>
 
     <div class="flex space-x-4 mt-8 mb-3 w-3/5 mx-auto">
