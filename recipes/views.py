@@ -1,7 +1,10 @@
 from django.shortcuts import render
 from django.views.generic import ListView,DetailView
+from django.views.generic.edit import CreateView,UpdateView,DeleteView
 from .models import Collection,Recipe,Ingredient
 from django.core.paginator import Paginator
+from django.urls import reverse_lazy
+from .forms import CollectionCreateForm
 
 def home_page(request):
     return render(request,'home.html')
@@ -28,3 +31,15 @@ class RecipeDetailView(DetailView):
     template_name='recipes/recipe_detail.html'
     context_object_name='recipe'
 
+
+class CollectionListView(ListView):
+    model=Collection
+    template_name='collection/collections_list.html'
+    context_object_name='collections'
+
+
+class CollectionDetailView(DetailView):
+    model=Collection
+    template_name='collection/collection_detail.html'
+    context_object_name='collection'
+    
