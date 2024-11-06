@@ -37,6 +37,7 @@ class CollectionListView(ListView):
     template_name='collection/collections_list.html'
     context_object_name='collections'
     paginate_by=6
+    ordering = ['title']
     
     def get_context_data(self,**kwargs):
         context=super().get_context_data(**kwargs)
@@ -54,7 +55,6 @@ class CollectionCreateView(CreateView):
     model = Collection
     template_name = 'collection/collection_form.html'
     form_class = CollectionCreateForm
-    success_url = reverse_lazy('recipe:collection_list')
 
     def form_valid(self, form):
         form.instance.author = self.request.user  
