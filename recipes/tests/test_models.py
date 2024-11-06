@@ -2,6 +2,7 @@ from django.test import TestCase
 from ..models import Collection,Recipe,Ingredient,Image
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
+from datetime import timedelta
 
 
 class InitialSetup(TestCase):
@@ -14,8 +15,8 @@ class InitialSetup(TestCase):
             difficulty_level="easy",
             instructions="test instruction",
             servings=2,
-            preparation_time=20,
-            total_time=30,
+            preparation_time=timedelta(minutes=20),
+            total_time=timedelta(minutes=30),
             calories=150,
         )
         self.ingredient=Ingredient.objects.create(name='salt',quantity=100,unit='gms',recipe=self.recipe)
@@ -58,7 +59,7 @@ class RecipeModelTest(InitialSetup):
         self.assertIn(self.ingredient,self.recipe.ingredients.all())
         
     def test_preparation_totaltime(self):
-        self.recipe.preparation_time=0
+        self.recipe.preparation_time=timedelta(minutes=0)
         with self.assertRaises(ValidationError):
             self.recipe.full_clean()
             
