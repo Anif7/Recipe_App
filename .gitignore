@@ -11,6 +11,3 @@ db.sqlite3
 .env
 venv/
 env/
-
-recipes/templates/
-recipes/urls.py
