@@ -38,61 +38,27 @@
         </p>        
     </div>
 
-    <div class="flex space-x-4 mt-8 mb-3 w-3/5 mx-auto">
-        <button id="ingredientsButton" onclick="showIngredients()" 
-            class="text-white bg-emerald-600 hover:bg-emerald-500 font-semibold px-5 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-400 rounded-full">
-            Ingredients
-        </button>
-        <button id="stepsButton" onclick="showSteps()" 
-            class="text-white bg-emerald-600 hover:bg-emerald-500 font-semibold px-5 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-400 rounded-full">
-            Steps
-        </button>
-    </div>
-    
-
-    <div class="flex justify-center bg-white w-3/5 mx-auto px-4 py-2 rounded-md drop-shadow-md">
-        <div id="ingredientsSection" class="text-gray-700 hidden flex-grow text-left">
-            <ul class="list-disc pl-6 space-y-2">
-                {% for ingredient in recipe.ingredients.all %}
-                    <li>{{ ingredient.name }} - {{ ingredient.quantity }}</li>
-                {%empty%}
+    <div class="bg-white w-3/5 mx-auto px-4 py-2 rounded-md drop-shadow-md mb-6">
+        <h3 class="text-xl font-semibold text-gray-800 mb-4">Ingredients</h3>
+        <ul class="list-disc pl-6 space-y-2">
+            {% for ingredient in recipe.ingredients.all %}
+                <li>{{ ingredient.name }} - {{ ingredient.quantity }}</li>
+            {% empty %}
                 <p>No Ingredients Provided</p>
-                {% endfor %}
-            </ul>
-        </div>
-    
-        <div id="stepsSection" class="text-gray-700 hidden flex-grow text-left">
-            <ol class="list-decimal pl-6 space-y-2">
-                <p>{{recipe.instructions}}</p>
-            </ol>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <div class="bg-white w-3/5 mx-auto px-4 py-2 rounded-md drop-shadow-md mb-6">
+        <h3 class="text-xl font-semibold text-gray-800 mb-4">Instructions</h3>
+        <div class="text-gray-700">
+            <trix-editor input="recipe_instructions" readonly>{{ recipe.instructions|safe }}</trix-editor>
         </div>
     </div>
     
 </div>
 
 <script>
-    function showIngredients() {
-        document.getElementById('ingredientsSection').classList.remove('hidden');
-        document.getElementById('stepsSection').classList.add('hidden');
-        
-        document.getElementById('ingredientsButton').classList.add('bg-emerald-700', 'text-white');
-        document.getElementById('ingredientsButton').classList.remove('bg-gray-200', 'text-gray-700');
-        document.getElementById('stepsButton').classList.add('bg-gray-200', 'text-gray-700');
-        document.getElementById('stepsButton').classList.remove('bg-emerald-700', 'text-white');
-    }
-
-    function showSteps() {
-        document.getElementById('ingredientsSection').classList.add('hidden');
-        document.getElementById('stepsSection').classList.remove('hidden');
-        
-        document.getElementById('stepsButton').classList.add('bg-emerald-700', 'text-white');
-        document.getElementById('stepsButton').classList.remove('bg-gray-200', 'text-gray-700');
-        document.getElementById('ingredientsButton').classList.add('bg-gray-200', 'text-gray-700');
-        document.getElementById('ingredientsButton').classList.remove('bg-emerald-700', 'text-white');
-    }
-
-    document.addEventListener('DOMContentLoaded', showIngredients);
-
     let currentIndex = 0;
     const slides = document.querySelectorAll(".carousel-slide");
 
