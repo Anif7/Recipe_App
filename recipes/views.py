@@ -3,7 +3,7 @@ from django.views.generic import ListView,DetailView
 from django.views.generic.edit import CreateView,UpdateView,DeleteView
 from .models import Collection,Recipe,Ingredient
 from django.core.paginator import Paginator
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy,reverse
 from .forms import CollectionCreateForm
 
 def home_page(request):
@@ -36,6 +36,12 @@ class CollectionListView(ListView):
     model=Collection
     template_name='collection/collections_list.html'
     context_object_name='collections'
+    paginate_by=6
+    
+    def get_context_data(self,**kwargs):
+        context=super().get_context_data(**kwargs)
+        context['total_collections']=Collection.objects.all().count()
+        return context
 
 
 class CollectionDetailView(DetailView):
@@ -53,6 +59,9 @@ class CollectionCreateView(CreateView):
     def form_valid(self, form):
         form.instance.author = self.request.user  
         return super().form_valid(form)
+    
+    def get_success_url(self):
+        return reverse('recipe:collection_detail',kwargs={'pk':self.object.pk})
     
     
 class CollectionUpdateView(UpdateView):

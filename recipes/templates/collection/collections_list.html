@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block content %}
 <div class="container mx-auto py-8 px-32">
-    <h1 class="text-4xl font-bold mb-6">Collections</h1>
+    <h1 class="text-4xl font-bold mb-6">Collections <span class="text-lg">({{total_collections}})</span></h1>
     <div class="flex justify-end">
         <a href="{% url 'recipe:collection_create' %}"
             class="btn bg-emerald-900 text-white rounded-full px-6 py-3 text-xl font-bold">Create
@@ -21,5 +21,6 @@
         <p class="text-gray-500">No collections available.</p>
         {% endfor %}
     </div>
+    {%include 'includes/_pagination.html' with page_obj=page_obj page_type='page'%}
 </div>
 {% endblock content %}
