@@ -1,8 +1,8 @@
 {% load widget_tweaks %}
 
 {% for field in form %}
-  <div class="form-group">
-    {{ field.label_tag }}
+  <div class="form-group mb-3">
+    <span class="font-semibold">{{ field.label_tag }}</span>
 
     {% if form.is_bound %}
       {% if field.errors %}

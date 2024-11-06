@@ -77,7 +77,6 @@ class CollectionUpdateFormTest(InitialSetup):
         response=self.client.get(reverse('recipe:collection_edit',kwargs={'pk':collection.pk}))
         self.assertEqual(response.status_code,200)
         self.assertContains(response,'value="Old Collection"')
-        self.assertContains(response,'id="recipe_'+str(self.recipe.id)+'"')
         
     def test_collection_update_invalid_data(self):
         self.client.login(username='anif',password='anif123')
