@@ -43,3 +43,36 @@ class CollectionDetailView(DetailView):
     template_name='collection/collection_detail.html'
     context_object_name='collection'
     
+    
+class CollectionCreateView(CreateView):
+    model = Collection
+    template_name = 'collection/collection_form.html'
+    form_class = CollectionCreateForm
+    success_url = reverse_lazy('recipe:collection_list')
+
+    def form_valid(self, form):
+        form.instance.author = self.request.user  
+        return super().form_valid(form)
+    
+    
+class CollectionUpdateView(UpdateView):
+    model=Collection
+    template_name='collection/collection_form.html'
+    form_class=CollectionCreateForm
+    context_object_name='collection'
+
+    def get_queryset(self):
+        return Collection.objects.filter(author=self.request.user)
+    
+    def get_success_url(self):
+        return reverse_lazy('recipe:collection_detail',kwargs={'pk':self.object.pk})
+    
+    
+class CollectionDeleteView(DeleteView):
+    model = Collection
+    template_name = 'collection/collection_confirm_delete.html'
+    context_object_name = 'collection'
+    success_url = reverse_lazy('recipe:collection_list')
+
+    def get_queryset(self):
+        return Collection.objects.filter(author=self.request.user)
