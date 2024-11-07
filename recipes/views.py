@@ -6,6 +6,7 @@ from django.core.paginator import Paginator
 from django.urls import reverse_lazy,reverse
 from .forms import CollectionCreateForm,RecipeForm,IngredientFormSet,ImageFormSet
 from django.contrib import messages
+from django.forms import ValidationError
 
 def home_page(request):
     return render(request,'home.html')
@@ -88,66 +89,37 @@ class CollectionDeleteView(DeleteView):
         return Collection.objects.filter(author=self.request.user)
     
     
-def recipe_create_or_update(request, recipe_id=None):
-    if recipe_id:
-        recipe = get_object_or_404(Recipe, id=recipe_id)
-        message_action = "updated"
-    else:
-        recipe = Recipe()
-        message_action = "created"
-
-    if request.method == "POST":
-        form = RecipeForm(request.POST, request.FILES, instance=recipe)
-        ingredient_formset = IngredientFormSet(request.POST, instance=recipe, prefix="ingredients")
-        image_formset = ImageFormSet(request.POST, request.FILES, instance=recipe, prefix="images")
-
-        if form.is_valid() and ingredient_formset.is_valid() and image_formset.is_valid():
-            recipe = form.save()
-            ingredient_formset.instance = recipe
-            image_formset.instance = recipe
-            ingredient_formset.save()
-            image_formset.save()
-            messages.success(request, f"Recipe successfully {message_action}.")
-            return redirect("recipe:recipe_detail", pk=recipe.id)
-        else:
-            messages.error(request, "There was an error with your submission. Please correct it below.")
-    else:
-        form = RecipeForm(instance=recipe)
-        ingredient_formset = IngredientFormSet(instance=recipe, prefix="ingredients")
-        image_formset = ImageFormSet(instance=recipe, prefix="images")
-
-    context = {
-        "form": form,
-        "ingredient_formset": ingredient_formset,
-        "image_formset": image_formset,
-        "recipe": recipe,
-        "initial_ingredients": ingredient_formset.initial,  
-        "initial_images": image_formset.initial, 
-    }
-    return render(request, "recipes/recipe_form.html", context)
-
-from django.forms import ValidationError
-
-def update_recipe(request, pk):
-    recipe = get_object_or_404(Recipe, pk=pk)
-
+def create_recipe(request):
     if request.method == 'POST':
-        form = RecipeForm(request.POST, instance=recipe)
+        # Create a new Recipe instance since we are creating a new recipe
+        recipe = Recipe()
+
+        # Create form instances for the recipe, ingredients, and images
+        form = RecipeForm(request.POST, request.FILES, instance=recipe)
         ingredient_formset = IngredientFormSet(request.POST, instance=recipe, prefix='ingredients')
         image_formset = ImageFormSet(request.POST, request.FILES, instance=recipe, prefix='images')
 
+        # Check if all forms are valid
         if form.is_valid() and ingredient_formset.is_valid() and image_formset.is_valid():
-            recipe = form.save()
+            recipe = form.save(commit=False)  # Save the recipe instance without committing to the DB yet
+
+            # Automatically set the author as the current logged-in user
+            recipe.author = request.user
+
+            # Save the recipe instance with the author set
+            recipe.save()
+
+            # Save ingredients and images associated with the recipe
             ingredients = ingredient_formset.save(commit=False)
             images = image_formset.save(commit=False)
 
-            # Validate and save each ingredient, ensuring fields have valid values
+            # Validate and save each ingredient
             for ingredient in ingredients:
                 if ingredient.quantity is None or ingredient.quantity <= 0:
                     ingredient_formset.errors.append(ValidationError(
                         'Quantity must be a positive number.'
                     ))
-                    # Stop here if invalid data is found
+                    # Return the form with errors
                     return render(request, 'recipes/recipe_form.html', {
                         'form': form,
                         'ingredient_formset': ingredient_formset,
@@ -161,12 +133,110 @@ def update_recipe(request, pk):
                 image.recipe = recipe
                 image.save()
 
-            # Also, delete any marked for deletion
+            # Save formsets (ingredients and images)
             ingredient_formset.save()
             image_formset.save()
 
+            # Redirect to the recipe detail page after successful creation
+            messages.success(request, "Recipe successfully created.")
             return redirect('recipe:recipe_detail', pk=recipe.pk)
 
+        else:
+            # If the form is not valid, show an error message
+            messages.error(request, "There was an error with your submission. Please correct it below.")
+
+    else:
+        # Initialize empty forms for creating a new recipe
+        form = RecipeForm()
+        ingredient_formset = IngredientFormSet(prefix='ingredients')
+        image_formset = ImageFormSet(prefix='images')
+
+    # Context for the template to display
+    context = {
+        'form': form,
+        'ingredient_formset': ingredient_formset,
+        'image_formset': image_formset,
+    }
+
+    return render(request, 'recipes/recipe_form.html', context)
+
+
+
+# def recipe_create_or_update(request, recipe_id=None):
+#     if recipe_id:
+#         recipe = get_object_or_404(Recipe, id=recipe_id)
+#         message_action = "updated"
+#     else:
+#         recipe = Recipe()
+#         message_action = "created"
+#     if request.method == "POST":
+#         form = RecipeForm(request.POST, request.FILES, instance=recipe)
+#         ingredient_formset = IngredientFormSet(request.POST, instance=recipe, prefix="ingredients")
+#         image_formset = ImageFormSet(request.POST, request.FILES, instance=recipe, prefix="images")
+#         if form.is_valid() and ingredient_formset.is_valid() and image_formset.is_valid():
+#             recipe.author = request.user
+#             recipe = form.save()
+#             ingredient_formset.instance = recipe
+#             image_formset.instance = recipe
+#             ingredient_formset.save()
+#             image_formset.save()
+#             messages.success(request, f"Recipe successfully {message_action}.")
+#             return redirect("recipe:recipe_detail", pk=recipe.id)
+#         else:
+#             messages.error(request, "There was an error with your submission. Please correct it below.")
+#     else:
+#         form = RecipeForm(instance=recipe)
+#         ingredient_formset = IngredientFormSet(instance=recipe, prefix="ingredients")
+#         image_formset = ImageFormSet(instance=recipe, prefix="images")
+#     context = {
+#         "form": form,
+#         "ingredient_formset": ingredient_formset,
+#         "image_formset": image_formset,
+#         "recipe": recipe,
+#         "initial_ingredients": ingredient_formset.initial,  
+#         "initial_images": image_formset.initial, 
+#     }
+#     return render(request, "recipes/recipe_form.html", context)
+
+
+# def update_recipe(request, pk):
+#     recipe = get_object_or_404(Recipe, pk=pk)
+#     if request.method == 'POST':
+#         form = RecipeForm(request.POST, instance=recipe)
+#         ingredient_formset = IngredientFormSet(request.POST, instance=recipe, prefix='ingredients')
+#         image_formset = ImageFormSet(request.POST, request.FILES, instance=recipe, prefix='images')
+
+#         if form.is_valid() and ingredient_formset.is_valid() and image_formset.is_valid():
+#             recipe = form.save()
+#             # Save formsets, including handling deletions
+#             ingredient_formset.save()  # This will delete marked ingredients
+#             image_formset.save()  # This will delete marked images
+#             return redirect('recipe:recipe_detail', pk=recipe.pk)
+#     else:
+#         form = RecipeForm(instance=recipe)
+#         ingredient_formset = IngredientFormSet(instance=recipe, prefix='ingredients')
+#         image_formset = ImageFormSet(instance=recipe, prefix='images')
+
+#     return render(request, 'recipes/recipe_form.html', {
+#         'form': form,
+#         'ingredient_formset': ingredient_formset,
+#         'image_formset': image_formset,
+#     })
+
+
+def update_recipe(request, pk):
+    recipe = get_object_or_404(Recipe, pk=pk)
+    
+    if request.method == 'POST':
+        form = RecipeForm(request.POST, instance=recipe)
+        ingredient_formset = IngredientFormSet(request.POST, instance=recipe, prefix='ingredients')
+        image_formset = ImageFormSet(request.POST, request.FILES, instance=recipe, prefix='images')
+        
+        if form.is_valid() and ingredient_formset.is_valid() and image_formset.is_valid():
+            recipe = form.save()
+            ingredient_formset.save()
+            image_formset.save()
+            return redirect('recipe:recipe_detail', pk=recipe.pk)
     else:
         form = RecipeForm(instance=recipe)
         ingredient_formset = IngredientFormSet(instance=recipe, prefix='ingredients')
@@ -177,3 +247,6 @@ def update_recipe(request, pk):
         'ingredient_formset': ingredient_formset,
         'image_formset': image_formset,
     })
+
+
+

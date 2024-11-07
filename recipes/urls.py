@@ -12,6 +12,6 @@ urlpatterns=[
     path('collection/create/',views.CollectionCreateView.as_view(),name='collection_create'),
     path('collection/<int:pk>/edit/',views.CollectionUpdateView.as_view(),name='collection_edit'),
     path('collection/<int:pk>/delete/',views.CollectionDeleteView.as_view(),name='collection_delete'),
-    path('recipe/create/',views.recipe_create_or_update,name='recipe_create'),
+    path('recipe/create/',views.create_recipe,name='recipe_create'),
     path('recipe/<int:pk>/edit',views.update_recipe,name='recipe_edit'),
 ]

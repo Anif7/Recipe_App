@@ -6,23 +6,51 @@
 
     {% if form.is_bound %}
       {% if field.errors %}
-        {% render_field field class="border-red-500 bg-red-50 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-red-500" %}
+        {% if field.name == "instructions" %}
+          <input id="instructions" type="hidden" name="instructions" value="{{ field.value|default:''|safe }}">
+          <trix-editor input="instructions" class="border-red-500 bg-red-50 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-red-500"></trix-editor>
+        {% else %}
+          {% render_field field class="border-red-500 bg-red-50 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-red-500 px-4 w-full" %}
+        {% endif %}
         {% for error in field.errors %}
-          <p class="text-red-500 text-sm mt-1">
-            {{ error }}
-          </p>
+          <p class="text-red-500 text-sm mt-1">{{ error }}</p>
         {% endfor %}
       {% else %}
-        {% render_field field class="border-green-500 bg-green-50 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-green-500" %}
+        {% if field.name == "instructions" %}
+          <input id="instructions" type="hidden" name="instructions" value="{{ field.value|default:''|safe }}">
+          <trix-editor input="instructions" class="border-green-500 bg-green-50 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-green-500"></trix-editor>
+        {% else %}
+          {% render_field field class="border-green-500 bg-green-50 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-green-500 px-4 w-full" %}
+        {% endif %}
       {% endif %}
     {% else %}
-      {% render_field field class="border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500" %}
+      {% if field.name == "instructions" %}
+        <input id="instructions" type="hidden" name="instructions" value="{{ field.value|default:''|safe }}">
+        <trix-editor input="instructions" class="border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"></trix-editor>
+      {% else %}
+        {% render_field field class="border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 px-8 w-full" %}
+      {% endif %}
     {% endif %}
 
     {% if field.help_text %}
-      <small class="text-gray-500">
-        {{ field.help_text }}
-      </small>
+      <small class="text-gray-500">{{ field.help_text }}</small>
     {% endif %}
   </div>
 {% endfor %}
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    const hiddenInput = document.getElementById("instructions");
+    const trixEditor = document.querySelector("trix-editor");
+
+    // Load the content from the hidden input into the Trix editor on load
+    if (hiddenInput.value) {
+      trixEditor.editor.loadHTML(hiddenInput.value);
+    }
+
+    // Sync the Trix editor changes back to the hidden input
+    trixEditor.addEventListener("trix-change", function() {
+      hiddenInput.value = trixEditor.editor.getDocument().toString();
+    });
+  });
+</script>
