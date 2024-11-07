@@ -12,7 +12,7 @@
             {% csrf_token %}
             <div class="mb-6">
                 <h3 class="text-xl font-semibold mb-2">Recipe Details</h3>
-                {{form.as_p}}
+                {%include 'includes/_forms.html'%}
             </div>
 
             <h3 class="text-xl font-semibold mt-6 mb-2">Ingredients</h3>
@@ -21,8 +21,9 @@
                 {% for form in ingredient_formset %}
                     <div class="ingredient-form mb-4" data-form-index="{{ forloop.counter0 }}">
                         {{ form.as_p }}
-                        <button type="button" class="text-red-500 hover:text-red-700 mt-2" onclick="removeIngredient(this)">Remove</button>
-                    </div>
+                        <input type="checkbox" name="ingredients-{{ forloop.counter0 }}-DELETE" hidden>
+                        <button type="button" class="text-red-500 hover:text-red-700 mt-2" onclick="markForDeletion(this, 'ingredient')">Remove</button>
+                    </div>                
                 {% endfor %}
             </div>
             <button type="button" id="addIngredientButton" class="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">Add Ingredient</button>
@@ -33,7 +34,8 @@
                 {% for form in image_formset %}
                     <div class="image-form mb-4" data-form-index="{{ forloop.counter0 }}">
                         {{ form.as_p }}
-                        <button type="button" class="text-red-500 hover:text-red-700 mt-2" onclick="removeImage(this)">Remove</button>
+                        <input type="checkbox" name="images-{{ forloop.counter0 }}-DELETE" hidden>
+                        <button type="button" class="text-red-500 hover:text-red-700 mt-2" onclick="markForDeletion(this, 'image')">Remove</button>
                     </div>
                 {% endfor %}
             </div>
@@ -75,14 +77,6 @@
             updateIngredientManagementForm();
         }
 
-        function removeIngredient(button) {
-            const ingredientForm = button.closest('.ingredient-form');
-            if (ingredientForm) {
-                ingredientForm.remove();
-                updateIngredientManagementForm();
-            }
-        }
-
         function addImage() {
             const formset = document.querySelectorAll('.image-form').length;
             const imageDiv = document.createElement('div');
@@ -92,39 +86,7 @@
             updateImageManagementForm();
         }
 
-        function removeImage(button) {
-            const imageForm = button.closest('.image-form');
-            if (imageForm) {
-                imageForm.remove();
-                updateImageManagementForm();
-            }
-        }
-
-        function updateIngredientManagementForm() {
-            const formset = document.querySelectorAll('.ingredient-form');
-            const managementForm = document.querySelector('#ingredient-formset input[name="ingredients-TOTAL_FORMS"]');
-            managementForm.value = formset.length;
-
-            formset.forEach((form, index) => {
-                form.querySelector('input[name^="ingredients-"]').forEach(input => {
-                    input.name = input.name.replace(/ingredients-\d+/, `ingredients-${index}`);
-                });
-            });
-            console.log('Ingredient total forms updated:', formset.length);
-        }
-
-        function updateImageManagementForm() {
-            const formset = document.querySelectorAll('.image-form');
-            const managementForm = document.querySelector('#image-formset input[name="images-TOTAL_FORMS"]');
-            managementForm.value = formset.length;
-
-            formset.forEach((form, index) => {
-                form.querySelector('input[name^="images-"]').forEach(input => {
-                    input.name = input.name.replace(/images-\d+/, `images-${index}`);
-                });
-            });
-            console.log('Image total forms updated:', formset.length);
-        }
+        
 
         function getIngredientFormHTML(index) {
             return `
@@ -159,7 +121,62 @@
             `;
         }
     });
+
+    // Move removeIngredient and removeImage outside of DOMContentLoaded for global scope access
+    function removeIngredient(button) {
+        const ingredientForm = button.closest('.ingredient-form');
+        if (ingredientForm) {
+            ingredientForm.remove();
+            updateIngredientManagementForm();
+        }
+    }
+
+    function removeImage(button) {
+        const imageForm = button.closest('.image-form');
+        if (imageForm) {
+            imageForm.remove();
+            updateImageManagementForm();
+        }
+    }
+    function updateIngredientManagementForm() {
+        const formset = document.querySelectorAll('.ingredient-form');
+        const managementForm = document.querySelector('#ingredient-formset input[name="ingredients-TOTAL_FORMS"]');
+        managementForm.value = formset.length;
+
+        formset.forEach((form, index) => {
+            form.querySelectorAll('input[name^="ingredients-"]').forEach(input => {
+                input.name = input.name.replace(/ingredients-\d+/, `ingredients-${index}`);
+            });
+        });
+        console.log('Ingredient total forms updated:', formset.length);
+    }
+
+    function updateImageManagementForm() {
+        const formset = document.querySelectorAll('.image-form');
+        const managementForm = document.querySelector('#image-formset input[name="images-TOTAL_FORMS"]');
+        managementForm.value = formset.length;
+
+        formset.forEach((form, index) => {
+            form.querySelectorAll('input[name^="images-"]').forEach(input => {
+                input.name = input.name.replace(/images-\d+/, `images-${index}`);
+            });
+        });
+        console.log('Image total forms updated:', formset.length);
+    }
+    function markForDeletion(button, formType) {
+        const formDiv = button.closest(`.${formType}-form`);
+        if (formDiv) {
+            const deleteField = formDiv.querySelector(`input[name*="-DELETE"]`);
+            if (deleteField) {
+                deleteField.checked = true;
+            }
+            // Optionally hide the form visually instead of removing it
+            formDiv.style.display = 'none';
+        }
+    }
+    
 </script>
+
 
 
 {% endblock content %}
