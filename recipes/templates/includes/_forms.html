@@ -38,19 +38,4 @@
   </div>
 {% endfor %}
 
-<script>
-  document.addEventListener("DOMContentLoaded", function() {
-    const hiddenInput = document.getElementById("instructions");
-    const trixEditor = document.querySelector("trix-editor");
 
-    // Load the content from the hidden input into the Trix editor on load
-    if (hiddenInput.value) {
-      trixEditor.editor.loadHTML(hiddenInput.value);
-    }
-
-    // Sync the Trix editor changes back to the hidden input
-    trixEditor.addEventListener("trix-change", function() {
-      hiddenInput.value = trixEditor.editor.getDocument().toString();
-    });
-  });
-</script>

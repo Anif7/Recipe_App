@@ -35,9 +35,8 @@ class IngredientForm(forms.ModelForm):
         fields = ['name', 'quantity', 'unit', 'is_optional']
         
     def full_clean(self):
-        # Ensure `quantity` has a default value if None
         if self.instance.quantity is None:
-            self.instance.quantity = 1  # Set a sensible default value
+            self.instance.quantity = 1
         super().full_clean()
 
 
