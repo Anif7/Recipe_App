@@ -1,0 +1,28 @@
+{% load widget_tweaks %}
+
+{% for field in form %}
+  <div class="mb-4">
+    <label class="font-semibold block mb-1">{{ field.label_tag }}</label>
+
+    {% if form.is_bound %}
+      {% if field.errors %}
+        {% render_field field class="border-red-500 bg-red-50 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-red-500" %}
+        {% for error in field.errors %}
+          <p class="text-red-500 text-sm mt-1">
+            {{ error }}
+          </p>
+        {% endfor %}
+      {% else %}
+        {% render_field field class="border-green-500 bg-green-50 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-green-500" %}
+      {% endif %}
+    {% else %}
+      {% render_field field class="border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500" %}
+    {% endif %}
+
+    {% if field.help_text %}
+      <small class="text-gray-500">
+        {{ field.help_text }}
+      </small>
+    {% endif %}
+  </div>
+{% endfor %}
