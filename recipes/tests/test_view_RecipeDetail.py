@@ -26,4 +26,4 @@ class RecipeDetailTest(InitialSetup):
     def test_recipe_detail_view_with_valid_recipe(self):
         recipe = self.response.context['recipe']
         self.assertEqual(recipe.title, 'dosa') 
-        self.assertEqual(recipe.cuisine, 'indian') 
+        self.assertEqual(recipe.cuisine, 'indian')

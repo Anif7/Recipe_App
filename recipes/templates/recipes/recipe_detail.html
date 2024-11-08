@@ -25,6 +25,15 @@
         <p class="text-lg text-gray-600 mt-1">By <span class="font-semibold">{{ recipe.author.username }}</span></p>
     </div>
 
+    {% if recipe.author == request.user %}
+    <div class="mb-4 flex justify-center">
+        <a href="{% url 'recipe:recipe_edit' recipe.id %}"
+                class="bg-blue-700 text-white font-semibold px-3 py-1">Edit</a>
+        <a href="{% url 'recipe:recipe_delete' recipe.id %}"
+            class="text-red-500 ml-4 px-3 py-1 bg-gray-300 font-semibold">Delete</a>
+    </div>
+    {%endif%}
+
     <div class="mb-8 flex flex-wrap gap-4 text-gray-700 justify-center">
         <p class="bg-gray-100 rounded-lg px-3 py-1">Cuisine: <span class="font-semibold">{{ recipe.cuisine }}</span></p>
         <p class="bg-gray-100 rounded-lg px-3 py-1">Difficulty Level: <span class="font-semibold">{{ recipe.difficulty_level }}</span></p>
@@ -42,7 +51,7 @@
         <h3 class="text-2xl font-bold text-green-800 mb-4">Ingredients :</h3>
         <ul class="list-disc pl-6 space-y-2">
             {% for ingredient in recipe.ingredients.all %}
-                <li>{{ ingredient.name }} - {{ ingredient.quantity }}</li>
+                <li>{{ ingredient.name }} - {{ ingredient.quantity }} {{ingredient.unit}}</li>
             {% empty %}
                 <p>No Ingredients Provided</p>
             {% endfor %}
