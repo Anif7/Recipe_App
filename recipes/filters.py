@@ -13,3 +13,6 @@ class RecipeFilter(django_filters.FilterSet):
         model = Recipe
         fields = ['title', 'author', 'cuisine', 'difficulty_level', 'food_type']
 
+
+class CollectionFilter(django_filters.FilterSet):
+    title=django_filters.CharFilter(lookup_expr='icontains',label='Search by title')

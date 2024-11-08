@@ -1,16 +1,14 @@
 {% extends 'base.html' %} {% block content %}
-<div class="mt-6 flex ml-32">
-  <a href="{% url 'recipe:recipe_create'  %}" class="bg-green-700 text-white p-2 rounded-full px-10 mb-3 font-bold">Create Recipe</a>
-</div>
-<div class="mt-6 px-8 flex justify-center">
+
+<div class="mt-6 pl-14 flex justify-center">
   <form method="GET" class="mb-6 flex flex-wrap justify-start ml-6">
     <div class="flex items-center mb-4 mr-4 w-1/4">
-        <label for="title" class="block mr-2">Search by Title</label>
+        <label for="title" class="block mr-2">Search by Title :</label>
         <input type="text" id="title" name="title" placeholder="Search by title" value="{{ filter.data.title }}" class="border p-2 flex-grow">
     </div>
     
     <div class="flex items-center mb-4 mr-4 w-1/4">
-        <label for="cuisine" class="block mr-2">Cuisine</label>
+        <label for="cuisine" class="block mr-2">Cuisine :</label>
         <select id="cuisine" name="cuisine" class="border p-2 flex-grow">
             <option value="">All Cuisines</option>
             {% for choice in filter.form.cuisine.field.choices %}
@@ -20,7 +18,7 @@
     </div>
     
     <div class="flex items-center mb-4 mr-4 w-1/4">
-        <label for="difficulty_level" class="block mr-2">Difficulty Level</label>
+        <label for="difficulty_level" class="block mr-2">Difficulty Level :</label>
         <select id="difficulty_level" name="difficulty_level" class="border p-2 flex-grow">
             <option value="">All Difficulties</option>
             {% for choice in filter.form.difficulty_level.field.choices %}
@@ -30,7 +28,7 @@
     </div>
     
     <div class="flex items-center mb-4 mr-4 w-1/4">
-        <label for="food_type" class="block mr-2">Food Type</label>
+        <label for="food_type" class="block mr-2">Food Type :</label>
         <select id="food_type" name="food_type" class="border p-2 flex-grow">
             <option value="">All Food Types</option>
             {% for choice in filter.form.food_type.field.choices %}
@@ -40,7 +38,7 @@
     </div>
 
     <div class="flex items-center mb-4 mr-4 w-1/4">
-        <label for="author" class="block mr-2">Author</label>
+        <label for="author" class="block mr-2">Author :</label>
         <select id="author" name="author" class="border p-2 flex-grow">
             <option value="">All Authors</option>
             {% for user in filter.form.author.field.choices %}
@@ -50,7 +48,7 @@
     </div>
 
     <div class="flex items-center mb-4 mr-4 w-1/4">
-        <label for="sort_by" class="block mr-2">Sort By</label>
+        <label for="sort_by" class="block mr-2">Sort By :</label>
         <select id="sort_by" name="sort_by" class="border p-2 flex-grow">
             <option value="">Sort By</option>
             <option value="calories_low_high" {% if filter.data.sort_by == 'calories_low_high' %}selected{% endif %}>Calories: Lowest to Highest</option>
@@ -62,6 +60,10 @@
 
     <button type="submit" class="bg-orange-500 text-white p-2 rounded-full px-10 mb-3">Search</button>
 </form>
+</div>
+
+<div class="mt-6 flex ml-32">
+  <a href="{% url 'recipe:recipe_create'  %}" class="bg-green-700 text-white p-2 rounded-full px-10 mb-3 font-bold">Create Recipe</a>
 </div>
 
 <div class="container mx-auto py-6 px-16">
