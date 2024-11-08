@@ -40,7 +40,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'recipes.apps.RecipesConfig',
     'widget_tweaks',
-    'crispy_forms',
 ]
 
 MIDDLEWARE = [
@@ -131,5 +130,3 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 MEDIA_URL='/media/'
 MEDIA_ROOT=os.path.join(BASE_DIR,'media/')
-
-CRISPY_TEMPLATE_PACK = 'bootstrap5'
