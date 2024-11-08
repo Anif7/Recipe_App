@@ -9,7 +9,7 @@ from django.contrib import messages
 from django.forms import ValidationError
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-from .filters import RecipeFilter
+from .filters import RecipeFilter,CollectionFilter
 
 def home_page(request):
     return render(request,'home.html')
@@ -19,16 +19,12 @@ class RecipeListView(ListView):
     model = Recipe
     template_name = 'recipes/recipe_list.html'
     context_object_name = 'recipes'
-    paginate_by = 3
+    paginate_by = 6
     filterset_class = RecipeFilter  
 
     def get_queryset(self):
         queryset = Recipe.objects.all()
-        
-        # Get the sort parameter
         sort_by = self.request.GET.get('sort_by')
-        
-        # Apply sorting to the queryset
         if sort_by == 'calories_low_high':
             queryset = queryset.order_by('calories')
         elif sort_by == 'calories_high_low':
@@ -37,21 +33,14 @@ class RecipeListView(ListView):
             queryset = queryset.order_by('-created_at')
         elif sort_by == 'created_at_old_new':
             queryset = queryset.order_by('created_at')
-
-        # Now apply the filterset with the sorted queryset
         self.filterset = self.filterset_class(self.request.GET, queryset=queryset)
 
         return self.filterset.qs
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        
-        # Get the sort parameter for featured recipes
         sort_by = self.request.GET.get('sort_by')
-
-        # Apply sorting to the featured recipes
         featured_recipes = Recipe.objects.filter(featured=True)
-        
         if sort_by == 'calories_low_high':
             featured_recipes = featured_recipes.order_by('calories')
         elif sort_by == 'calories_high_low':
@@ -60,12 +49,9 @@ class RecipeListView(ListView):
             featured_recipes = featured_recipes.order_by('-created_at')
         elif sort_by == 'created_at_old_new':
             featured_recipes = featured_recipes.order_by('created_at')
-
-        # Apply the filterset to the featured recipes
         self.filterset_featured = self.filterset_class(self.request.GET, queryset=featured_recipes)
         context['featured_recipes_page'] = self.filterset_featured.qs
 
-        # Pagination for featured recipes
         paginator = Paginator(context['featured_recipes_page'], 6)
         page_number = self.request.GET.get('featured_page')
         context['featured_recipes_page'] = paginator.get_page(page_number)
@@ -87,9 +73,15 @@ class CollectionListView(ListView):
     paginate_by=6
     ordering = ['title']
     
+    def get_queryset(self):
+        queryset=Collection.objects.all()
+        self.filterset=CollectionFilter(self.request.GET,queryset=queryset)
+        return self.filterset.qs
+    
     def get_context_data(self,**kwargs):
         context=super().get_context_data(**kwargs)
         context['total_collections']=Collection.objects.all().count()
+        context['filter']=self.filterset
         return context
 
 

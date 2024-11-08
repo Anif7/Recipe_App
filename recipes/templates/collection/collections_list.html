@@ -1,5 +1,13 @@
 {% extends 'base.html' %}
 {% block content %}
+<div class="mt-6 pl-32 flex ">
+    <form method="GET" class="mb-6 flex flex-wrap justify-start ml-6 items-center">
+        <label for="title" class="block mr-2">Search by Title :</label>
+        <input type="text" id="title" name="title" placeholder="Search by title" value="{{ filter.data.title }}" class="border p-2 flex-grow">
+        <button type="submit" class="bg-orange-500 text-white p-2 rounded-full px-8 mb-3 ml-3">Search</button>
+    </form>
+</div>
+
 <div class="container mx-auto py-8 px-32">
     <h1 class="text-4xl font-bold mb-6">Collections <span class="text-lg">({{total_collections}})</span></h1>
     <div class="flex justify-end">
