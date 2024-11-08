@@ -23,10 +23,10 @@
             <div id="ingredient-formset">
                 {{ ingredient_formset.management_form }}
                 {% for form in ingredient_formset %}
-                    <div class="ingredient-form mb-4 flex flex-wrap gap-4 items-center" data-form-index="{{ forloop.counter0 }}">
-                        {{ form.as_p }}
+                    <div class="ingredient-form mb-4 flex flex-wrap gap-3 items-center" data-form-index="{{ forloop.counter0 }}">
+                        {%include 'includes/_form _for_ingredients_images.html'%}
                         <input type="checkbox" name="ingredients-{{ forloop.counter0 }}-DELETE" style="display: none;" hidden>
-                        <button type="button" class="text-white font-semibold px-3 py-1 bg-red-600 mt-2" onclick="markForDeletion(this, 'ingredient')">Remove</button>
+                        <button type="button" class="text-white font-semibold px-3 py-1 bg-red-600" onclick="markForDeletion(this, 'ingredient')">Remove</button>
                     </div>                
                 {% endfor %}
             </div>
@@ -36,10 +36,10 @@
             <div id="image-formset">
                 {{ image_formset.management_form }}
                 {% for form in image_formset %}
-                    <div class="image-form mb-4 flex flex-wrap gap-4 items-center" data-form-index="{{ forloop.counter0 }}">
-                        {{ form.as_p }}
+                    <div class="image-form mb-4 flex flex-wrap gap-3 items-center" data-form-index="{{ forloop.counter0 }}">
+                        {%include 'includes/_form _for_ingredients_images.html'%}
                         <input type="checkbox" name="images-{{ forloop.counter0 }}-DELETE" style="display: none;" hidden>
-                        <button type="button" class="text-white font-semibold px-3 py-1 bg-red-600 mt-2" onclick="markForDeletion(this, 'image')">Remove</button>
+                        <button type="button" class="text-white font-semibold px-3 py-1 bg-red-600" onclick="markForDeletion(this, 'image')">Remove</button>
                     </div>
                 {% endfor %}
             </div>
@@ -117,7 +117,7 @@
                 <label for="id_ingredients-${index}-optional">
                     <input type="checkbox" name="ingredients-${index}-optional" /> Optional
                 </label>
-                <button type="button" class="text-white font-semibold px-3 py-1 bg-red-600 mt-2 remove-ingredient">Remove</button>
+                <button type="button" class="text-white font-semibold px-3 py-1 bg-red-600 remove-ingredient">Remove</button>
             `;
         }
 
@@ -125,7 +125,7 @@
             return `
                 <label for="id_images-${index}-image">Image:</label>
                 <input type="file" name="images-${index}-image" accept="image/*" class="border rounded p-2" />
-                <button type="button" class="text-white font-semibold px-3 py-1 bg-red-600 mt-2 remove-image">Remove</button>
+                <button type="button" class="text-white font-semibold px-3 py-1 bg-red-600 remove-image">Remove</button>
             `;
         }
     });
@@ -183,9 +183,6 @@
         }
     }
     
-    
 </script>
-
-
 
 {% endblock content %}

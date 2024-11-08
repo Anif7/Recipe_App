@@ -1,0 +1,30 @@
+{% load widget_tweaks %}
+
+{% for field in form %}
+  <div class="mb-4">
+    {% if "id" not in field.name and "recipe" not in field.name and "DELETE" not in field.name %}
+      {{ field.label_tag }}
+    {% endif %}
+
+    {% if form.is_bound %}
+      {% if field.errors %}
+        {% render_field field class="border border-red-500 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500" %}
+        {% for error in field.errors %}
+          <div class="text-red-500 mt-1 text-sm">
+            {{ error }}
+          </div>
+        {% endfor %}
+      {% else %}
+        {% render_field field class="border border-green-500 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500" %}
+      {% endif %}
+    {% else %}
+      {% render_field field class="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" %}
+    {% endif %}
+
+    {% if field.help_text %}
+      <small class="text-gray-500 mt-1 text-sm">
+        {{ field.help_text }}
+      </small>
+    {% endif %}
+  </div>
+{% endfor %}

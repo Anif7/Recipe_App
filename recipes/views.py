@@ -95,26 +95,20 @@ class CollectionDeleteView(DeleteView):
 def create_recipe(request):
     if request.method == 'POST':
         recipe = Recipe()
-
         form = RecipeForm(request.POST, request.FILES, instance=recipe)
         ingredient_formset = IngredientFormSet(request.POST, instance=recipe, prefix='ingredients')
         image_formset = ImageFormSet(request.POST, request.FILES, instance=recipe, prefix='images')
 
         if form.is_valid() and ingredient_formset.is_valid() and image_formset.is_valid():
             recipe = form.save(commit=False)
-
             recipe.author = request.user
-
             recipe.save()
-
             ingredients = ingredient_formset.save(commit=False)
             images = image_formset.save(commit=False)
 
             for ingredient in ingredients:
                 if ingredient.quantity is None or ingredient.quantity <= 0:
-                    ingredient_formset.errors.append(ValidationError(
-                        'Quantity must be a positive number.'
-                    ))
+                    ingredient_formset.add_error('quantity', 'Quantity must be a positive number.')
                     return render(request, 'recipes/recipe_form.html', {
                         'form': form,
                         'ingredient_formset': ingredient_formset,
@@ -126,7 +120,6 @@ def create_recipe(request):
             for image in images:
                 image.recipe = recipe
                 image.save()
-                
             ingredient_formset.save()
             image_formset.save()
 
@@ -135,6 +128,11 @@ def create_recipe(request):
 
         else:
             messages.error(request, "There was an error with your submission. Please correct it below.")
+            return render(request, 'recipes/recipe_form.html', {
+                'form': form,
+                'ingredient_formset': ingredient_formset,
+                'image_formset': image_formset,
+            })
 
     else:
         form = RecipeForm()
@@ -146,7 +144,6 @@ def create_recipe(request):
         'ingredient_formset': ingredient_formset,
         'image_formset': image_formset,
     }
-
     return render(request, 'recipes/recipe_form.html', context)
 
 
