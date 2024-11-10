@@ -69,21 +69,42 @@ class CreateRecipeFormTests(TestCase):
 
     def test_post_invalid_recipe_data(self):
         """Test POST request with invalid recipe data."""
-        post_data = {
+        image_data = SimpleUploadedFile("home-img-1.jpg", b"file_content", content_type="image/jpeg")
+
+        data = {
             'title': '',
-            'cuisine': 'invalid_choice', 
-            'ingredients-TOTAL_FORMS': '1',
+            'cuisine': 'indian',
+            'food_type': 'veg',
+            'difficulty_level': 'easy',
+            'instructions': 'Instructions',
+            'servings': 6,
+            'preparation_time': '00:20:00',
+            'total_time': '00:20:00',
+            'calories': 250,
+            'ingredients-TOTAL_FORMS': '2',
             'ingredients-INITIAL_FORMS': '0',
-            'ingredients-0-name': '',
+            'ingredients-0-name': 'Salt',
+            'ingredients-0-quantity': '1',
+            'ingredients-0-unit': 'gms',
+            'ingredients-1-name': 'Pepper',
+            'ingredients-1-quantity': '2',
+            'ingredients-1-unit': 'gms',
             'images-TOTAL_FORMS': '1',
             'images-INITIAL_FORMS': '0',
         }
-        response = self.client.post(self.create_recipe_url, post_data)
+
+        files = {
+            'images-0-image': image_data,
+        }
+
+        response = self.client.post(reverse('recipe:recipe_create'), data=data, files=files, follow=True)
         self.assertEqual(response.status_code, 200)
+        self.assertFalse(Recipe.objects.exists())
     
     def test_ingredient_quantity_validation(self):
         """Test validation for ingredient quantity."""
-        post_data = {
+        image_data = SimpleUploadedFile("home-img-1.jpg", b"file_content", content_type="image/jpeg")
+        data = {
             'title': 'Test Recipe',
             'cuisine': 'indian',
             'food_type': 'veg',
@@ -93,16 +114,20 @@ class CreateRecipeFormTests(TestCase):
             'preparation_time': '00:10:00',
             'total_time': '00:20:00',
             'calories': 100,
-            'ingredients-TOTAL_FORMS': '1',
+            'ingredients-TOTAL_FORMS': '2',
             'ingredients-INITIAL_FORMS': '0',
             'ingredients-0-name': 'Salt',
-            'ingredients-0-quantity': '-1', 
-            'ingredients-0-unit': 'teaspoon',
-            'images-TOTAL_FORMS': '0',
+            'ingredients-0-quantity': '-1',
+            'ingredients-0-unit': 'gms',
+            'images-TOTAL_FORMS': '1',
+            'images-INITIAL_FORMS': '0',
         }
-        response = self.client.post(self.create_recipe_url, post_data)
+        files = {
+            'images-0-image': image_data,
+        }
+        response = self.client.post(reverse('recipe:recipe_create'), data=data, files=files, follow=True)
         self.assertEqual(response.status_code, 200)
-        self.assertFalse(Recipe.objects.exists())
+        self.assertFalse(Ingredient.objects.exists())
 
 
 class UpdateRecipeFormTests(TestCase):

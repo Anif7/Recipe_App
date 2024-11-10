@@ -1,5 +1,5 @@
 from django.urls import reverse, resolve
-from ..views import create_recipe, update_recipe, RecipeDeleteView
+from ..views import CreateRecipeView, UpdateRecipeView, RecipeDeleteView
 from .test_models import InitialSetup
 
 
@@ -15,7 +15,7 @@ class RecipeCreateViewTest(InitialSetup):
 
     def test_recipe_create_view_url_resolves_correct_view(self):
         view = resolve('/recipe/create/')
-        self.assertEqual(view.func, create_recipe)
+        self.assertEqual(view.func.view_class, CreateRecipeView)
 
     def test_recipe_create_view_uses_correct_template(self):
         self.assertTemplateUsed(self.response, 'recipes/recipe_form.html')
@@ -33,7 +33,7 @@ class RecipeUpdateViewTest(InitialSetup):
 
     def test_recipe_update_view_url_resolves_correct_view(self):
         view = resolve(self.recipe_update_url)
-        self.assertEqual(view.func, update_recipe)
+        self.assertEqual(view.func.view_class, UpdateRecipeView)
 
     def test_recipe_update_view_uses_correct_template(self):
         self.assertTemplateUsed(self.response, 'recipes/recipe_form.html')

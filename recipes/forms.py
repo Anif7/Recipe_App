@@ -34,6 +34,12 @@ class IngredientForm(forms.ModelForm):
         model = Ingredient
         fields = ['name', 'quantity', 'unit', 'is_optional']
         
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.fields['quantity'].widget.input_type == "number":
+            self.fields['quantity'].widget.attrs['min'] = 1
+            self.fields['quantity'].widget.attrs['value'] = 1
+    
     def full_clean(self):
         if self.instance.quantity is None:
             self.instance.quantity = 1

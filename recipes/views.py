@@ -9,6 +9,7 @@ from django.contrib import messages
 from django.forms import ValidationError
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views import View
 
 def home_page(request):
     return render(request,'home.html')
@@ -91,86 +92,77 @@ class CollectionDeleteView(DeleteView):
         return Collection.objects.filter(author=self.request.user)
     
     
-@login_required
-def create_recipe(request):
-    if request.method == 'POST':
-        recipe = Recipe()
-        form = RecipeForm(request.POST, request.FILES, instance=recipe)
-        ingredient_formset = IngredientFormSet(request.POST, instance=recipe, prefix='ingredients')
-        image_formset = ImageFormSet(request.POST, request.FILES, instance=recipe, prefix='images')
+class CreateRecipeView(LoginRequiredMixin, CreateView):
+    model = Recipe
+    form_class = RecipeForm
+    template_name = 'recipes/recipe_form.html'
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        if self.request.POST:
+            context['ingredient_formset'] = IngredientFormSet(self.request.POST, instance=self.object, prefix='ingredients')
+            context['image_formset'] = ImageFormSet(self.request.POST, self.request.FILES, instance=self.object, prefix='images')
+        else:
+            context['ingredient_formset'] = IngredientFormSet(prefix='ingredients')
+            context['image_formset'] = ImageFormSet(prefix='images')
+        return context
 
-        if form.is_valid() and ingredient_formset.is_valid() and image_formset.is_valid():
-            recipe = form.save(commit=False)
-            recipe.author = request.user
-            recipe.save()
-            ingredients = ingredient_formset.save(commit=False)
-            images = image_formset.save(commit=False)
+    def form_valid(self, form):
+        recipe = form.save(commit=False)
+        recipe.author = self.request.user
+        recipe.save()
 
-            for ingredient in ingredients:
-                if ingredient.quantity is None or ingredient.quantity <= 0:
-                    ingredient_formset.add_error('quantity', 'Quantity must be a positive number.')
-                    return render(request, 'recipes/recipe_form.html', {
-                        'form': form,
-                        'ingredient_formset': ingredient_formset,
-                        'image_formset': image_formset,
-                    })
-                ingredient.recipe = recipe
-                ingredient.save()
-
-            for image in images:
-                image.recipe = recipe
-                image.save()
+        context = self.get_context_data()
+        ingredient_formset = context['ingredient_formset']
+        image_formset = context['image_formset']
+        
+        if ingredient_formset.is_valid() and image_formset.is_valid():
+            ingredient_formset.instance = recipe
+            image_formset.instance = recipe
             ingredient_formset.save()
             image_formset.save()
-
-            messages.success(request, "Recipe successfully created.")
-            return redirect('recipe:recipe_detail', pk=recipe.pk)
-
+            
+            messages.success(self.request, "Recipe successfully created.")
+            return redirect(self.get_success_url(recipe))
         else:
-            messages.error(request, "There was an error with your submission. Please correct it below.")
-            return render(request, 'recipes/recipe_form.html', {
-                'form': form,
-                'ingredient_formset': ingredient_formset,
-                'image_formset': image_formset,
-            })
+            return self.form_invalid(form)
 
-    else:
-        form = RecipeForm()
-        ingredient_formset = IngredientFormSet(prefix='ingredients')
-        image_formset = ImageFormSet(prefix='images')
+    def get_success_url(self,recipe):
+        return reverse_lazy('recipe:recipe_detail', kwargs={'pk': recipe.pk})
+        
 
-    context = {
-        'form': form,
-        'ingredient_formset': ingredient_formset,
-        'image_formset': image_formset,
-    }
-    return render(request, 'recipes/recipe_form.html', context)
+class UpdateRecipeView(LoginRequiredMixin, UpdateView):
+    model = Recipe
+    form_class = RecipeForm
+    template_name = 'recipes/recipe_form.html'
+    context_object_name = 'recipe'
+    success_url = reverse_lazy('recipe:recipe_list')
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        if self.request.POST:
+            context['ingredient_formset'] = IngredientFormSet(self.request.POST, instance=self.object, prefix='ingredients')
+            context['image_formset'] = ImageFormSet(self.request.POST, self.request.FILES, instance=self.object, prefix='images')
+        else:
+            context['ingredient_formset'] = IngredientFormSet(instance=self.object, prefix='ingredients')
+            context['image_formset'] = ImageFormSet(instance=self.object, prefix='images')
+        return context
 
-@login_required
-def update_recipe(request, pk):
-    recipe = get_object_or_404(Recipe, pk=pk)
-    
-    if request.method == 'POST':
-        form = RecipeForm(request.POST, instance=recipe)
-        ingredient_formset = IngredientFormSet(request.POST, instance=recipe, prefix='ingredients')
-        image_formset = ImageFormSet(request.POST, request.FILES, instance=recipe, prefix='images')
+    def form_valid(self, form):
+        context = self.get_context_data()
+        ingredient_formset = context['ingredient_formset']
+        image_formset = context['image_formset']
         
         if form.is_valid() and ingredient_formset.is_valid() and image_formset.is_valid():
-            recipe = form.save()
+            response = super().form_valid(form)
             ingredient_formset.save()
             image_formset.save()
-            return redirect('recipe:recipe_detail', pk=recipe.pk)
-    else:
-        form = RecipeForm(instance=recipe)
-        ingredient_formset = IngredientFormSet(instance=recipe, prefix='ingredients')
-        image_formset = ImageFormSet(instance=recipe, prefix='images')
+            return response
+        else:
+            return self.form_invalid(form)
 
-    return render(request, 'recipes/recipe_form.html', {
-        'form': form,
-        'ingredient_formset': ingredient_formset,
-        'image_formset': image_formset,
-    })
+    def get_success_url(self):
+        return reverse_lazy('recipe:recipe_detail', kwargs={'pk': self.object.pk})
 
 
 class RecipeDeleteView(DeleteView,LoginRequiredMixin):
