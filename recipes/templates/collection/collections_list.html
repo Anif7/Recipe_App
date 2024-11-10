@@ -4,6 +4,16 @@
     <form method="GET" class="mb-6 flex flex-wrap justify-start ml-6 items-center">
         <label for="title" class="block mr-2">Search by Title :</label>
         <input type="text" id="title" name="title" placeholder="Search by title" value="{{ filter.data.title }}" class="border p-2 flex-grow">
+
+        <div class="flex items-center mr-4 ml-4">
+        <label for="author" class="block mr-2">Author :</label>
+        <select id="author" name="author" class="border p-2 flex-grow w-32">
+            <option value="">All Authors</option>
+            {% for user in filter.form.author.field.choices %}
+                <option value="{{ user.0 }}" {% if user.0 == filter.data.author %}selected{% endif %}>{{ user.1 }}</option>
+            {% endfor %}
+        </select>
+    </div>
         <button type="submit" class="bg-orange-500 text-white p-2 rounded-full px-8 mb-3 ml-3">Search</button>
     </form>
 </div>
