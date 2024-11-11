@@ -85,7 +85,6 @@ class RegisterViewTests(TestCase):
 
 
 class UserRegistrationFormTests(TestCase):
-
     def test_valid_data(self):
         form_data = {
             'username': 'newuser',
