@@ -1,5 +1,5 @@
 import django_filters
-from .models import Recipe
+from .models import Recipe,Collection
 from django.contrib.auth.models import User
 
 class RecipeFilter(django_filters.FilterSet):
@@ -18,3 +18,6 @@ class CollectionFilter(django_filters.FilterSet):
     title=django_filters.CharFilter(lookup_expr='icontains',label='Search by title')
     author = django_filters.ModelChoiceFilter(queryset=User.objects.all(), label='Author')
     
+    class Meta:
+        model=Collection
+        fields = ['title','author']

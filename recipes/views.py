@@ -22,9 +22,10 @@ class RecipeListView(ListView):
     context_object_name = 'recipes'
     paginate_by = 6
     filterset_class = RecipeFilter  
+    ordering=['-created_at']
 
     def get_queryset(self):
-        queryset = Recipe.objects.all()
+        queryset = Recipe.objects.all().order_by('-created_at')
         sort_by = self.request.GET.get('sort_by')
         if sort_by == 'calories_low_high':
             queryset = queryset.order_by('calories')
@@ -41,7 +42,7 @@ class RecipeListView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         sort_by = self.request.GET.get('sort_by')
-        featured_recipes = Recipe.objects.filter(featured=True)
+        featured_recipes = Recipe.objects.filter(featured=True).order_by('-created_at')
         if sort_by == 'calories_low_high':
             featured_recipes = featured_recipes.order_by('calories')
         elif sort_by == 'calories_high_low':
@@ -75,7 +76,7 @@ class CollectionListView(ListView):
     ordering = ['title']
     
     def get_queryset(self):
-        queryset=Collection.objects.all()
+        queryset=Collection.objects.all().order_by('title')
         self.filterset=CollectionFilter(self.request.GET,queryset=queryset)
         return self.filterset.qs
     
