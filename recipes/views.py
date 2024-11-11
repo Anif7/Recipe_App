@@ -25,41 +25,34 @@ class RecipeListView(ListView):
     ordering=['-created_at']
 
     def get_queryset(self):
-        queryset = Recipe.objects.all().order_by('-created_at')
-        sort_by = self.request.GET.get('sort_by')
-        if sort_by == 'calories_low_high':
-            queryset = queryset.order_by('calories')
-        elif sort_by == 'calories_high_low':
-            queryset = queryset.order_by('-calories')
-        elif sort_by == 'created_at_new_old':
-            queryset = queryset.order_by('-created_at')
-        elif sort_by == 'created_at_old_new':
-            queryset = queryset.order_by('created_at')
+        queryset = Recipe.objects.all().order_by('created_at')
+        queryset = self.apply_sorting(queryset)
         self.filterset = self.filterset_class(self.request.GET, queryset=queryset)
-
         return self.filterset.qs
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        sort_by = self.request.GET.get('sort_by')
-        featured_recipes = Recipe.objects.filter(featured=True).order_by('-created_at')
-        if sort_by == 'calories_low_high':
-            featured_recipes = featured_recipes.order_by('calories')
-        elif sort_by == 'calories_high_low':
-            featured_recipes = featured_recipes.order_by('-calories')
-        elif sort_by == 'created_at_new_old':
-            featured_recipes = featured_recipes.order_by('-created_at')
-        elif sort_by == 'created_at_old_new':
-            featured_recipes = featured_recipes.order_by('created_at')
+        featured_recipes = Recipe.objects.filter(featured=True).order_by('created_at')
+        featured_recipes  = self.apply_sorting(featured_recipes)
         self.filterset_featured = self.filterset_class(self.request.GET, queryset=featured_recipes)
         context['featured_recipes_page'] = self.filterset_featured.qs
-
         paginator = Paginator(context['featured_recipes_page'], 6)
         page_number = self.request.GET.get('featured_page')
         context['featured_recipes_page'] = paginator.get_page(page_number)
-
         context['filter'] = self.filterset
         return context
+    
+    def apply_sorting(self, queryset):
+        sort_by = self.request.GET.get('sort_by')
+        if sort_by == 'calories_low_high':
+            return queryset.order_by('calories')
+        elif sort_by == 'calories_high_low':
+            return queryset.order_by('-calories')
+        elif sort_by == 'created_at_new_old':
+            return queryset.order_by('-created_at')
+        elif sort_by == 'created_at_old_new':
+            return queryset.order_by('created_at')
+        return queryset
 
 
 class RecipeDetailView(DetailView):
