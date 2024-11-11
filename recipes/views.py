@@ -25,14 +25,14 @@ class RecipeListView(ListView):
     ordering=['-created_at']
 
     def get_queryset(self):
-        queryset = Recipe.objects.all().order_by('created_at')
+        queryset = Recipe.objects.all().order_by('-created_at')
         queryset = self.apply_sorting(queryset)
         self.filterset = self.filterset_class(self.request.GET, queryset=queryset)
         return self.filterset.qs
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        featured_recipes = Recipe.objects.filter(featured=True).order_by('created_at')
+        featured_recipes = Recipe.objects.filter(featured=True).order_by('-created_at')
         featured_recipes  = self.apply_sorting(featured_recipes)
         self.filterset_featured = self.filterset_class(self.request.GET, queryset=featured_recipes)
         context['featured_recipes_page'] = self.filterset_featured.qs
@@ -55,7 +55,7 @@ class RecipeListView(ListView):
         return queryset
 
 
-class RecipeDetailView(DetailView):
+class RecipeDetailView(LoginRequiredMixin,DetailView):
     model=Recipe
     template_name='recipes/recipe_detail.html'
     context_object_name='recipe'
@@ -80,7 +80,7 @@ class CollectionListView(ListView):
         return context
 
 
-class CollectionDetailView(DetailView):
+class CollectionDetailView(LoginRequiredMixin,DetailView):
     model=Collection
     template_name='collection/collection_detail.html'
     context_object_name='collection'
