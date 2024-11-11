@@ -82,7 +82,7 @@ class CollectionListView(ListView):
     
     def get_context_data(self,**kwargs):
         context=super().get_context_data(**kwargs)
-        context['total_collections']=Collection.objects.all().count()
+        context['total_collections']=self.filterset.qs.count()
         context['filter']=self.filterset
         return context
 

@@ -1,22 +1,46 @@
 {% extends 'base.html' %}
 {% block content %}
-<div class="mt-6 pl-32 flex ">
-    <form method="GET" class="mb-6 flex flex-wrap justify-start ml-6 items-center">
-        <label for="title" class="block mr-2">Search by Title :</label>
-        <input type="text" id="title" name="title" placeholder="Search by title" value="{{ filter.data.title }}" class="border p-2 flex-grow">
-
-        <div class="flex items-center mr-4 ml-4">
-        <label for="author" class="block mr-2">Author :</label>
-        <select id="author" name="author" class="border p-2 flex-grow w-32">
-            <option value="">All Authors</option>
-            {% for user in filter.form.author.field.choices %}
-                <option value="{{ user.0 }}" {% if user.0 == filter.data.author %}selected{% endif %}>{{ user.1 }}</option>
-            {% endfor %}
+<div class="mt-6 pl-32 flex justify-center">
+    <form method="GET" class="mb-6 flex flex-wrap items-center bg-white shadow-lg p-6 rounded-lg w-full max-w-4xl">
+      <div class="flex flex-col mr-4 w-full sm:w-auto">
+        <label for="title" class="mb-2 text-sm font-semibold text-gray-700">Search by Title</label>
+        <input 
+          type="text" 
+          id="title" 
+          name="title" 
+          placeholder="Search by title" 
+          value="{{ filter.data.title }}" 
+          class="border border-gray-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-orange-400 w-full sm:w-64"
+        >
+      </div>
+  
+      <div class="flex flex-col mr-4 mt-4 sm:mt-0 w-full sm:w-auto">
+        <label for="author" class="mb-2 text-sm font-semibold text-gray-700">Author</label>
+        <select 
+          id="author" 
+          name="author" 
+          class="border border-gray-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-orange-400 w-full sm:w-48"
+        >
+          <option value="">All Authors</option>
+          {% for user in filter.form.author.field.choices %}
+            <option value="{{ user.0 }}" {% if user.0 == filter.data.author %}selected{% endif %}>
+              {{ user.1 }}
+            </option>
+          {% endfor %}
         </select>
-    </div>
-        <button type="submit" class="bg-orange-500 text-white p-2 rounded-full px-8 mb-3 ml-3">Search</button>
+      </div>
+
+      <div class="flex justify-center sm:justify-start mt-4 sm:mt-0">
+        <button 
+          type="submit" 
+          class="bg-orange-500 text-white p-3 rounded-lg font-semibold shadow-md hover:bg-orange-600 transition w-full sm:w-auto"
+        >
+          Search
+        </button>
+      </div>
     </form>
-</div>
+  </div>
+  
 
 <div class="container mx-auto py-8 px-32">
     <h1 class="text-4xl font-bold mb-6">Collections <span class="text-lg">({{total_collections}})</span></h1>
