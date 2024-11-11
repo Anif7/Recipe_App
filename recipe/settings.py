@@ -134,4 +134,8 @@ MEDIA_URL='/media/'
 MEDIA_ROOT=os.path.join(BASE_DIR,'media/')
 
 LOGIN_URL = '/account/login/'
-LOGIN_REDIRECT_URL = '/'
+LOGOUT_URL='/account/logout/'
+LOGIN_REDIRECT_URL = 'recipe:home_page'
+LOGOUT_REDIRECT_URL = 'recipe:home_page' 
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
