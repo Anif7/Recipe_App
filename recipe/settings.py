@@ -32,6 +32,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'account',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -133,8 +134,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 MEDIA_URL='/media/'
 MEDIA_ROOT=os.path.join(BASE_DIR,'media/')
 
-LOGIN_URL = '/account/login/'
-LOGOUT_URL='/account/logout/'
+LOGIN_URL = 'login'
+LOGOUT_URL='logout'
 LOGIN_REDIRECT_URL = 'recipe:home_page'
 LOGOUT_REDIRECT_URL = 'recipe:home_page' 
 
