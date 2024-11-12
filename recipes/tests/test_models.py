@@ -23,6 +23,7 @@ class InitialSetup(TestCase):
         self.collection= Collection.objects.create(title='test',author=self.user)
         self.collection.recipes.add(self.recipe)
         self.image=Image.objects.create(image='media/images/dosa.jpg',recipe=self.recipe)
+        self.client.login(username='anif',password='anif123')
 
 
 class CollectionModelTest(InitialSetup):
