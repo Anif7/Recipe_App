@@ -10,7 +10,11 @@
           <input id="instructions" type="hidden" name="instructions" value="{{ field.value|default:''|safe }}">
           <trix-editor input="instructions" class="border-red-500 bg-red-50 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-red-500"></trix-editor>
         {% else %}
-          {% render_field field class="border-red-500 bg-red-50 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-red-500 px-4 w-full" %}
+          {% if field.field.widget.input_type == "checkbox" %}
+            {% render_field field class="w-8 border-red-500 bg-red-50 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500" %}
+          {% else %}
+            {% render_field field class="border-red-500 bg-red-50 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-red-500 px-4 w-full" %}
+          {% endif %}
         {% endif %}
         {% for error in field.errors %}
           <p class="text-red-500 text-sm mt-1">{{ error }}</p>
@@ -20,7 +24,11 @@
           <input id="instructions" type="hidden" name="instructions" value="{{ field.value|default:''|safe }}">
           <trix-editor input="instructions" class="border-green-500 bg-green-50 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-green-500"></trix-editor>
         {% else %}
-          {% render_field field class="border-green-500 bg-green-50 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-green-500 px-4 w-full" %}
+          {% if field.field.widget.input_type == "checkbox" %}
+            {% render_field field class="w-8 border-green-500 bg-green-50 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500" %}
+          {% else %}
+            {% render_field field class="border-green-500 bg-green-50 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-green-500 px-4 w-full" %}
+          {% endif %}
         {% endif %}
       {% endif %}
     {% else %}
@@ -28,7 +36,11 @@
         <input id="instructions" type="hidden" name="instructions" value="{{ field.value|default:''|safe }}">
         <trix-editor input="instructions" class="border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"></trix-editor>
       {% else %}
-        {% render_field field class="border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 px-8 w-full" %}
+        {% if field.field.widget.input_type == "checkbox" %}
+          {% render_field field class="w-8 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" %}
+        {% else %}
+          {% render_field field class="border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 px-8 w-full" %}
+        {% endif %}
       {% endif %}
     {% endif %}
 
@@ -37,5 +49,3 @@
     {% endif %}
   </div>
 {% endfor %}
-
-

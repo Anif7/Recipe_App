@@ -51,7 +51,7 @@
         <h3 class="text-2xl font-bold text-green-800 mb-4">Ingredients :</h3>
         <ul class="list-disc pl-6 space-y-2">
             {% for ingredient in recipe.ingredients.all %}
-                <li>{{ ingredient.name }} - {{ ingredient.quantity }} {{ingredient.unit}}</li>
+                <li>{{ ingredient.name }} - {{ ingredient.quantity }} {{ingredient.unit}} {%if ingredient.is_optional%} (Optional) {%endif%}</li>
             {% empty %}
                 <p>No Ingredients Provided</p>
             {% endfor %}
