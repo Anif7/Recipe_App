@@ -10,28 +10,52 @@ from django.forms import ValidationError
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views import View
+from .filters import RecipeFilter,CollectionFilter
 
 def home_page(request):
     return render(request,'home.html')
     
 
 class RecipeListView(ListView):
-    model=Recipe
-    template_name='recipe_list.html'
-    context_object_name='recipes'
-    paginate_by=3
-    ordering = ['-created_at']
-    
-    def get_context_data(self,**kwargs):
-        context=super().get_context_data(**kwargs)
-        featured_recipes=Recipe.objects.filter(featured=True).order_by('-created_at')
-        paginator=Paginator(featured_recipes,6)
-        page_number=self.request.GET.get('featured_page')
-        context['featured_recipes_page']=paginator.get_page(page_number)
+    model = Recipe
+    template_name = 'recipes/recipe_list.html'
+    context_object_name = 'recipes'
+    paginate_by = 6
+    filterset_class = RecipeFilter  
+    ordering=['-created_at']
+
+    def get_queryset(self):
+        queryset = Recipe.objects.all().order_by('-created_at')
+        queryset = self.apply_sorting(queryset)
+        self.filterset = self.filterset_class(self.request.GET, queryset=queryset)
+        return self.filterset.qs
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        featured_recipes = Recipe.objects.filter(featured=True).order_by('-created_at')
+        featured_recipes  = self.apply_sorting(featured_recipes)
+        self.filterset_featured = self.filterset_class(self.request.GET, queryset=featured_recipes)
+        context['featured_recipes_page'] = self.filterset_featured.qs
+        paginator = Paginator(context['featured_recipes_page'], 6)
+        page_number = self.request.GET.get('featured_page')
+        context['featured_recipes_page'] = paginator.get_page(page_number)
+        context['filter'] = self.filterset
         return context
+    
+    def apply_sorting(self, queryset):
+        sort_by = self.request.GET.get('sort_by')
+        if sort_by == 'calories_low_high':
+            return queryset.order_by('calories')
+        elif sort_by == 'calories_high_low':
+            return queryset.order_by('-calories')
+        elif sort_by == 'created_at_new_old':
+            return queryset.order_by('-created_at')
+        elif sort_by == 'created_at_old_new':
+            return queryset.order_by('created_at')
+        return queryset
 
 
-class RecipeDetailView(DetailView):
+class RecipeDetailView(LoginRequiredMixin,DetailView):
     model=Recipe
     template_name='recipes/recipe_detail.html'
     context_object_name='recipe'
@@ -44,13 +68,19 @@ class CollectionListView(ListView):
     paginate_by=6
     ordering = ['title']
     
+    def get_queryset(self):
+        queryset=Collection.objects.all().order_by('title')
+        self.filterset=CollectionFilter(self.request.GET,queryset=queryset)
+        return self.filterset.qs
+    
     def get_context_data(self,**kwargs):
         context=super().get_context_data(**kwargs)
-        context['total_collections']=Collection.objects.all().count()
+        context['total_collections']=self.filterset.qs.count()
+        context['filter']=self.filterset
         return context
 
 
-class CollectionDetailView(DetailView):
+class CollectionDetailView(LoginRequiredMixin,DetailView):
     model=Collection
     template_name='collection/collection_detail.html'
     context_object_name='collection'
