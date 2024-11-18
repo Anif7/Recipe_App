@@ -32,6 +32,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'account',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -57,7 +58,9 @@ ROOT_URLCONF = 'recipe.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates'),
+                os.path.join(BASE_DIR, 'recipes', 'templates'),
+                os.path.join(BASE_DIR, 'account', 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -130,3 +133,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 MEDIA_URL='/media/'
 MEDIA_ROOT=os.path.join(BASE_DIR,'media/')
+
+LOGIN_URL = 'login'
+LOGOUT_URL='logout'
+LOGIN_REDIRECT_URL = 'recipe:home_page'
+LOGOUT_REDIRECT_URL = 'recipe:home_page' 
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

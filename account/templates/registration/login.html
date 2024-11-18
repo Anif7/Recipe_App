@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}Log-in{% endblock %}
+{% block content %}
+<div class="flex items-center justify-center min-h-screen bg-gray-100">
+  <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
+    <h1 class="text-2xl font-bold text-gray-800 mb-4 text-center">Log-in</h1>
+    
+    {% if form.errors %}
+      <p class="text-red-600 mb-4">
+        Your username and password didn't match. Please try again.
+      </p>
+    {% endif %}
+
+    <div class="login-form">
+      <form action="{% url 'login' %}" method="post" class="space-y-4">
+        {% csrf_token %}
+        
+        <input type="hidden" name="next" value="{{ next }}" />
+
+        <div class="space-y-2">
+          {%include 'includes/_forms.html'%}
+        </div>
+
+        <button type="submit" 
+                class="w-full bg-indigo-600 text-white py-2 rounded-md font-semibold hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+          Log in
+        </button>
+      </form>
+
+      <div class="mt-4 text-center">
+        <!-- Forgot Password Link -->
+        <a href="{% url 'password_reset' %}" class="text-sm text-indigo-600 hover:text-indigo-700">
+          Forgot password?
+        </a>
+      </div>
+
+      <div class="mt-2 text-center">
+        <!-- Sign Up Link -->
+        <p class="text-sm text-gray-600">
+          Don't have an account? 
+          <a href="{%url 'register' %}" class="text-indigo-600 hover:text-indigo-700">
+            Sign up
+          </a>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

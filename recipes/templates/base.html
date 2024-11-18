@@ -15,6 +15,8 @@
     <link rel="stylesheet" href="{% static 'css/home.css' %}">
     <link rel="stylesheet" type="text/css" href="https://unpkg.com/trix@2.0.8/dist/trix.css">
     <script type="text/javascript" src="https://unpkg.com/trix@2.0.8/dist/trix.umd.min.js"></script>
+    <script src="https://unpkg.com/alpinejs" defer></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     {%block extra_head %}{%endblock extra_head%}
   </head>
   <body class="">
@@ -31,6 +33,14 @@
           <a href="{% url 'recipe:collection_list' %}" class="hover:text-cyan-700 font-bold mx-3 text-lg"
             >Collection</a
           >
+          <span class="user">
+            {% if request.user.is_authenticated %}
+            {%include 'includes/_dropdown.html' with name=request.user.username email=request.user.email%}
+            {% else %}
+              <a href="{% url 'login' %}" class="px-4 py-2 bg-gray-200 text-gray-800 font-semibold rounded-lg hover:bg-gray-300 transition duration-300">Login</a>
+              <a href="{% url 'register' %}" class="px-4 py-2 bg-black text-white font-semibold rounded-lg hover:bg-gray-800 transition duration-300">Signup</a>   
+            {% endif %}
+            </span>
         </div>
       </div>
     </nav>

@@ -86,7 +86,7 @@ class CollectionDetailView(LoginRequiredMixin,DetailView):
     context_object_name='collection'
     
     
-class CollectionCreateView(CreateView):
+class CollectionCreateView(LoginRequiredMixin,CreateView):
     model = Collection
     template_name = 'collection/collection_form.html'
     form_class = CollectionCreateForm
@@ -99,7 +99,7 @@ class CollectionCreateView(CreateView):
         return reverse('recipe:collection_detail',kwargs={'pk':self.object.pk})
     
     
-class CollectionUpdateView(UpdateView):
+class CollectionUpdateView(LoginRequiredMixin,UpdateView):
     model=Collection
     template_name='collection/collection_form.html'
     form_class=CollectionCreateForm
@@ -112,7 +112,7 @@ class CollectionUpdateView(UpdateView):
         return reverse_lazy('recipe:collection_detail',kwargs={'pk':self.object.pk})
     
     
-class CollectionDeleteView(DeleteView):
+class CollectionDeleteView(LoginRequiredMixin,DeleteView):
     model = Collection
     template_name = 'collection/collection_confirm_delete.html'
     context_object_name = 'collection'
