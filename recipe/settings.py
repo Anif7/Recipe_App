@@ -159,9 +159,3 @@ if 'DATABASE_URL' in os.environ:
         conn_max_age=500,
         conn_health_checks=True,
     )
-
-STORAGES = {
-    "staticfiles": {
-        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
-    },
-}
