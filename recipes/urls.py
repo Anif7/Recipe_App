@@ -11,5 +11,8 @@ urlpatterns=[
     path('collection/<int:pk>/',views.CollectionDetailView.as_view(),name='collection_detail'),
     path('collection/create/',views.CollectionCreateView.as_view(),name='collection_create'),
     path('collection/<int:pk>/edit/',views.CollectionUpdateView.as_view(),name='collection_edit'),
-    path('collection/<int:pk>/delete/',views.CollectionDeleteView.as_view(),name='collection_delete')
+    path('collection/<int:pk>/delete/',views.CollectionDeleteView.as_view(),name='collection_delete'),
+    path('recipe/create/',views.CreateRecipeView.as_view(),name='recipe_create'),
+    path('recipe/<int:pk>/edit/',views.UpdateRecipeView.as_view(),name='recipe_edit'),
+    path('recipe/<int:pk>/delete/',views.RecipeDeleteView.as_view(),name='recipe_delete'),
 ]

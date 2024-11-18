@@ -7,7 +7,7 @@
     
     <form method="post" class="bg-white rounded-lg shadow-md p-6" novalidate>
         {% csrf_token %}
-        {% include 'includes/_forms.html' %}
+         {{form.as_p}}
 
         <button type="submit" class="bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-4 rounded">
             {% if collection %}Update Collection{% else %}Create Collection{% endif %}
